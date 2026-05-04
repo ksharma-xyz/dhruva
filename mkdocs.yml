@@ -1,0 +1,103 @@
+site_name: Dhruva
+site_description: Kotlin Multiplatform location library for Android and iOS.
+site_url: https://ksharma-xyz.github.io/dhruva/
+repo_url: https://github.com/ksharma-xyz/dhruva
+repo_name: ksharma-xyz/dhruva
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 Karan Sharma. Apache-2.0.
+
+theme:
+  name: material
+  language: en
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/star-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/star
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ksharma-xyz/dhruva
+  generator: false
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Concepts:
+      - Architecture: concepts/architecture.md
+      - Lifecycle: concepts/lifecycle.md
+      - Errors: concepts/errors.md
+  - Recipes:
+      - One-shot location: recipes/one-shot.md
+      - Continuous tracking: recipes/continuous.md
+      - Pairing with Aagya: recipes/with-aagya.md
+  - Advanced:
+      - Crash handling: advanced/crash-handling.md
+      - Testing: advanced/testing.md
+  - Publishing: publishing.md
+  - Changelog: changelog.md

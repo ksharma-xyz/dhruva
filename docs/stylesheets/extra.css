@@ -1,0 +1,76 @@
+/* Dhruva — deep indigo / starlight palette */
+
+:root > * {
+    --md-primary-fg-color: #2D2A8C;
+    --md-primary-fg-color--light: #4942C4;
+    --md-primary-fg-color--dark: #1B1965;
+    --md-accent-fg-color: #79B8E8;
+}
+
+[data-md-color-scheme="slate"] {
+    --md-default-bg-color: #0F0E1F;
+    --md-default-bg-color--light: #16152C;
+    --md-default-bg-color--lighter: #1F1E3F;
+    --md-primary-fg-color: #6B65DA;
+    --md-accent-fg-color: #A6CFEF;
+}
+
+.dhruva-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background:
+        radial-gradient(ellipse at 30% 10%, rgba(121, 184, 232, 0.12), transparent 60%),
+        radial-gradient(ellipse at 70% 90%, rgba(45, 42, 140, 0.12), transparent 60%);
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.dhruva-hero h1 {
+    font-size: 3rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #79B8E8, #6B65DA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dhruva-hero p {
+    font-size: 1.1rem;
+    color: var(--md-default-fg-color--light);
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.dhruva-hero .sanskrit {
+    font-size: 1.5rem;
+    color: var(--md-accent-fg-color);
+    margin-bottom: 0.75rem;
+    font-style: italic;
+}
+
+.tag-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.tag-pills li {
+    background: var(--md-primary-fg-color--light);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.md-typeset .highlight pre {
+    padding: 1rem 1.25rem;
+}
+
+.md-typeset table:not([class]) {
+    font-size: 0.85rem;
+}
