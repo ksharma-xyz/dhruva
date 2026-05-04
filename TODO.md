@@ -1,69 +1,55 @@
-# TODO — when you're ready to publish
+# TODO
 
-This is your checklist for taking Dhruva from "private repo on disk" to "available on Maven Central". Do these in order. Each is independent so you can pause between them.
+## Done so far
 
-## 1. Namespace on Central Portal — DONE
+- [x] Verified the `io.github.ksharma-xyz` namespace on Central Portal
+- [x] Generated PGP signing key, registered with keyservers
+- [x] Added 4 secrets to GitHub: `SONATYPE_USERNAME`, `SONATYPE_PASSWORD`, `SIGNING_KEY`, `SIGNING_KEY_PASSWORD`
+- [x] Released **v0.1.0** to Maven Central
+- [x] Made the repo public
+- [x] GitHub Pages docs site live at <https://ksharma-xyz.github.io/dhruva/>
 
-You're publishing under `io.github.ksharma-xyz`, auto-verified by Central Portal via your GitHub account. No DNS work needed. Already verified, nothing to do here.
+## How to cut the next release
 
-- [x] Namespace `io.github.ksharma-xyz` verified on Central Portal
+1. Bump in `gradle.properties`: `VERSION_NAME=0.X.Y-SNAPSHOT` to `VERSION_NAME=0.X.Y`.
+2. In `CHANGELOG.md`, move the `## [Unreleased]` entries under a new `## [0.X.Y] - YYYY-MM-DD` heading and leave a fresh empty `## [Unreleased]` block above.
+3. Commit and tag:
+   ```bash
+   git commit -am "Release 0.X.Y"
+   git tag v0.X.Y
+   git push origin main --tags
+   ```
+4. The `publish-release.yml` workflow handles Maven Central upload, Central Portal promotion, and GitHub Release creation automatically.
+5. Bump back to the next snapshot: `VERSION_NAME=0.(X+1).0-SNAPSHOT`, commit, push.
 
-## 2. Generate a PGP signing key
+Maven Central indexing lag is ~10-20 min after the workflow finishes. The artifact is browsable at <https://central.sonatype.com/artifact/io.github.ksharma-xyz/dhruva-state> immediately, but `repo1.maven.org` (what Gradle reads) takes a bit longer.
 
-Maven Central requires every artifact to be signed.
+## v0.2.0 candidate work
 
-- [ ] `brew install gnupg` if you don't already have it
-- [ ] `gpg --gen-key` (pick a strong passphrase, save it somewhere safe like 1Password)
-- [ ] `gpg --list-secret-keys --keyid-format=long` (note the long key ID after `sec rsa4096/`)
-- [ ] `gpg --keyserver keyserver.ubuntu.com --send-keys <YOUR_KEY_ID>`
-- [ ] Also send to: `gpg --keyserver keys.openpgp.org --send-keys <YOUR_KEY_ID>`
-- [ ] Export the secret half for CI: `gpg --export-secret-keys --armor <YOUR_KEY_ID> > ~/dhruva-signing.asc`
-- [ ] Keep `dhruva-signing.asc` somewhere safe and **never commit it**
+- [ ] Replace `AndroidLocationTracker.resolveContextActivity` with `LocalActivity.current` from `androidx.activity:activity-compose` 1.10+. Drops the `ContextWrapper` unwrap loop, simpler and idiomatic. Activity-compose is already a transitive dep, no new dep needed.
+- [ ] Geofencing as a separate `dhruva-geofencing` module
+- [ ] Forward / reverse geocoding as a separate `dhruva-geocoding` module
+- [ ] Background location, with explicit opt-in (`LocationConfig.background = true`)
+- [ ] Non-Google-Play Android backend using `LocationManager` directly (for FOSS distribution channels)
+- [ ] Robolectric SDK matrix tests for the Android tracker (API 28, 30, 33, 36)
+- [x] Migrate KRAIL onto `dhruva-data` (replace `core/location`) — done 2026-05-05, branch `feat/aagya-dhruva-migration`
 
-## 3. Add 4 secrets to GitHub
+## v1.0.0 release criteria
 
-Go to `https://github.com/ksharma-xyz/dhruva/settings/secrets/actions` and add:
+- [ ] At least one external project using Dhruva (besides KRAIL)
+- [ ] Geocoding shipped as a separate module
+- [ ] No breaking API changes for two consecutive minor releases
+- [ ] Public API frozen and documented at the doc site
+- [ ] Detekt clean across all modules
 
-- [ ] `SONATYPE_USERNAME` — from Central Portal → Account → Generate User Token (the "username" half)
-- [ ] `SONATYPE_PASSWORD` — from same page (the "password" half)
-- [ ] `SIGNING_KEY` — full ASCII-armored contents of `dhruva-signing.asc`
-- [ ] `SIGNING_KEY_PASSWORD` — the passphrase you set in step 2
+## Optional polish
 
-Repeat for `https://github.com/ksharma-xyz/dhruva/settings/secrets/actions` (same values, both repos use the same key).
-
-## 4. Cut v0.1.0
-
-When you're confident the API is right:
-
-- [ ] Bump version: in `gradle.properties`, change `VERSION_NAME=0.1.0-SNAPSHOT` to `VERSION_NAME=0.1.0`
-- [ ] Move "Unreleased" entries in `CHANGELOG.md` under a new `## [0.1.0] — 2026-MM-DD` heading
-- [ ] `git commit -am "Release 0.1.0"`
-- [ ] `git tag v0.1.0`
-- [ ] `git push origin main --tags`
-- [ ] Watch the Actions tab — `publish-release.yml` does the rest
-- [ ] Once published, bump back: `VERSION_NAME=0.2.0-SNAPSHOT`, commit, push
-
-## 5. Make the repos public
-
-When you're ready to share:
-
-```bash
-gh repo edit ksharma-xyz/dhruva --visibility public --accept-visibility-change-consequences
-gh repo edit ksharma-xyz/dhruva --visibility public --accept-visibility-change-consequences
-```
-
-The docs site at `https://ksharma-xyz.github.io/dhruva/` (and `/dhruva/`) goes live on the next push to `main` after that.
-
-## 6. (Optional) Announce
-
-Places that pick up new KMP libraries:
-
-- [ ] Tweet / Bluesky / Mastodon
-- [ ] Post to r/Kotlin, r/androiddev
-- [ ] [KMP awesome list](https://github.com/terrakok/kmp-awesome) — open a PR
+- [ ] Submit to [klibs.io](https://klibs.io) directory
+- [ ] PR to [terrakok/kmp-awesome](https://github.com/terrakok/kmp-awesome)
+- [ ] Tweet / Bluesky / Mastodon announcement
+- [ ] Post to r/Kotlin and r/androiddev
 - [ ] Kotlin Slack `#multiplatform` channel
-- [ ] [klibs.io](https://klibs.io/) directory
 
 ---
 
-Reference: `docs/publishing.md` in either repo has the same flow with more detail and troubleshooting.
+Detailed publishing flow with troubleshooting lives in [docs/publishing.md](docs/publishing.md).
