@@ -34,7 +34,14 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --stacktrace
+        run: |
+          if [ -z "$ORG_GRADLE_PROJECT_mavenCentralUsername" ]; then
+            echo "::error::Sonatype secrets not configured. Cannot publish release."
+            echo "::error::Add SONATYPE_USERNAME, SONATYPE_PASSWORD, SIGNING_KEY, SIGNING_KEY_PASSWORD"
+            echo "::error::in repo settings before tagging. See TODO.md / docs/publishing.md."
+            exit 1
+          fi
+          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --stacktrace
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

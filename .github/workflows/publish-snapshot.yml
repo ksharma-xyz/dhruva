@@ -27,4 +27,11 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        run: ./gradlew publishToMavenCentral --no-configuration-cache --stacktrace
+        run: |
+          if [ -z "$ORG_GRADLE_PROJECT_mavenCentralUsername" ]; then
+            echo "::notice::Sonatype secrets not configured yet. Skipping snapshot publication."
+            echo "::notice::Add SONATYPE_USERNAME, SONATYPE_PASSWORD, SIGNING_KEY, SIGNING_KEY_PASSWORD"
+            echo "::notice::in repo settings to enable. See TODO.md / docs/publishing.md."
+            exit 0
+          fi
+          ./gradlew publishToMavenCentral --no-configuration-cache --stacktrace
