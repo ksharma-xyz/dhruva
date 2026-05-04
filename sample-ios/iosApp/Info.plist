@@ -20,6 +20,8 @@
     <string>0.1.0</string>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>MinimumOSVersion</key>
+    <string>15.3</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>The Dhruva sample uses your location to demonstrate one-shot and streaming fixes.</string>
     <key>UISupportedInterfaceOrientations</key>

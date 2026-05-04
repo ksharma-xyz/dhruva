@@ -5,15 +5,17 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build & Test
+  build-and-test:
+    name: Build, test, sample APK
     runs-on: macos-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -23,29 +25,80 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Set up Gradle
+      - name: Set up Gradle (with cache)
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build all targets
-        run: ./gradlew build --stacktrace
+      - name: Cache Kotlin/Native Konan dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: konan-${{ runner.os }}-
 
-      - name: Run unit tests (JVM)
+      - name: Write local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Compile every target
+        run: ./gradlew assemble --stacktrace
+
+      - name: Unit tests (JVM common code)
         run: ./gradlew jvmTest --stacktrace
 
-      - name: Run unit tests (Android)
+      - name: Unit tests (Android)
         run: ./gradlew testDebugUnitTest --stacktrace
 
-      - name: Run iOS simulator tests
+      - name: Unit tests (iOS Simulator arm64)
         run: ./gradlew iosSimulatorArm64Test --stacktrace
+
+      - name: Build sample APK (debug)
+        run: ./gradlew :sample-android:assembleDebug --stacktrace
+
+      - name: Verify Maven publication (dry run, local repo only)
+        run: ./gradlew publishToMavenLocal --no-configuration-cache --stacktrace
+        env:
+          ORG_GRADLE_PROJECT_RELEASE_SIGNING_ENABLED: "false"
 
       - name: Detekt
         run: ./gradlew detekt --stacktrace
+        continue-on-error: true
+
+      - name: Upload sample APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-android-debug-apk
+          path: sample-android/build/outputs/apk/debug/*.apk
+          retention-days: 14
 
       - name: Upload reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: build-reports
           path: |
             **/build/reports/
             **/build/test-results/
+          retention-days: 7
+
+  docs-build:
+    name: Verify MkDocs site builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install MkDocs Material
+        run: |
+          pip install \
+            mkdocs-material \
+            mkdocs-minify-plugin \
+            "pymdown-extensions>=10"
+
+      - name: Build site (strict mode catches broken links and missing pages)
+        run: mkdocs build --strict

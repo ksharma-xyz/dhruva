@@ -94,9 +94,9 @@ LaunchedEffect(Unit) {
 
 ## Supported platforms
 
-- **Android** API 24+ (Android 7.0). Android target uses `FusedLocationProviderClient`,
+- **Android** API 28+ (Android 7.0). Android target uses `FusedLocationProviderClient`,
   so the host app must include Google Play Services.
-- **iOS** 15.0+. Uses `CLLocationManager` directly, no extra dependencies.
+- **iOS** 15.3+. Uses `CLLocationManager` directly, no extra dependencies.
 
 ## Roadmap
 

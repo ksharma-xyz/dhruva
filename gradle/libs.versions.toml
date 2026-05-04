@@ -39,7 +39,7 @@ robolectric = "4.16.1"
 vanniktech-publish = "0.30.0"
 dokka = "2.0.0"
 detekt = "1.23.8"
-android-min-sdk = "24"
+android-min-sdk = "28"
 android-target-sdk = "36"
 android-compile-sdk = "36"
 
