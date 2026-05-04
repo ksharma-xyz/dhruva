@@ -8,6 +8,8 @@ A small **Kotlin Multiplatform** location library for Android and iOS.
 One-shot and continuous tracking, with the right defaults baked in.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ksharma-xyz/dhruva-state?style=flat-square&label=maven%20central)](https://central.sonatype.com/artifact/io.github.ksharma-xyz/dhruva-state)
+[![CI](https://img.shields.io/github/actions/workflow/status/ksharma-xyz/dhruva/ci.yml?style=flat-square&label=CI)](https://github.com/ksharma-xyz/dhruva/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/ksharma-xyz/dhruva/docs.yml?style=flat-square&label=docs)](https://ksharma-xyz.github.io/dhruva/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3.10-7F52FF.svg?style=flat-square&logo=kotlin)](https://kotlinlang.org)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-lightgrey.svg?style=flat-square)](#)

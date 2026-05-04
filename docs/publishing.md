@@ -97,8 +97,17 @@ git commit -am "Bump to 0.2.0-SNAPSHOT"
 git push origin main
 ```
 
-The `publish-snapshot.yml` workflow runs on every push to `main` and republishes
-the snapshot to the Central Portal snapshot repository.
+## Snapshots and Central Portal
+
+Sonatype Central Portal does **not** accept SNAPSHOT versions, only releases.
+Dhruva's `publish-snapshot.yml` workflow detects any `-SNAPSHOT` suffix in
+`gradle.properties` and skips the publish step with a clean notice. So during
+normal `0.X.Y-SNAPSHOT` development, pushes to `main` no-op cleanly on the
+publish side; CI still runs.
+
+The intended flow is: tag `v0.X.Y`, the `publish-release.yml` workflow pushes
+the release through Central Portal. Use snapshots locally via
+`./gradlew publishToMavenLocal` for testing only.
 
 ## Local dry run
 
