@@ -6,6 +6,22 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-05
+
+### Fixed
+- KLIB resolver "duplicated unique_name" error when consumers depend on both
+  Aagya and Dhruva on iOS. Both libraries previously published modules named
+  `:state` and `:data`, which produced colliding klib unique_names like
+  `io.github.ksharma-xyz:data`. The Gradle modules are now renamed to
+  `:dhruva-state`, `:dhruva-data`, `:dhruva-di-koin` so each klib has a
+  globally unique name.
+
+### Changed
+- `AndroidLocationTracker` no longer ships a `resolveContextActivity` helper.
+  `rememberLocationTracker()` reads `LocalActivity.current`
+  (`androidx.activity.compose` 1.10+) directly. Activity-compose was already
+  a transitive dependency, so no change is required for consumers.
+
 ## [0.1.0] - 2026-05-04
 
 ### Added

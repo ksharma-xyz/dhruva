@@ -37,7 +37,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.data)
+    implementation(projects.dhruvaData)
     implementation(libs.compose.runtime)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui)

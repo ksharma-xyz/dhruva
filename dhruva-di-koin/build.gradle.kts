@@ -11,7 +11,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     androidLibrary {
-        namespace = "xyz.ksharma.dhruva.location.data"
+        namespace = "xyz.ksharma.dhruva.location.di"
         compileSdk = libs.versions.android.compile.sdk.get().toInt()
         minSdk = libs.versions.android.min.sdk.get().toInt()
     }
@@ -28,21 +28,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.state)
-            implementation(libs.compose.runtime)
-            implementation(libs.kotlinx.coroutines.core)
-        }
-        androidMain.dependencies {
-            implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.lifecycle.runtime.ktx)
-            implementation(libs.kotlinx.coroutines.play.services)
-            api(libs.play.services.location)
-        }
-        commonTest.dependencies {
-            implementation(libs.test.kotlin)
-            implementation(libs.test.coroutines)
-            implementation(libs.test.turbine)
+            api(projects.dhruvaState)
+            api(projects.dhruvaData)
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
         }
     }
 }

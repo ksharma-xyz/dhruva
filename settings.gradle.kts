@@ -23,7 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
-include(":state")
-include(":data")
-include(":di-koin")
+include(":dhruva-state")
+include(":dhruva-data")
+include(":dhruva-di-koin")
 include(":sample-android")
