@@ -147,18 +147,6 @@ internal class AndroidLocationTracker(
     }
 
     companion object {
-        internal fun resolveContextActivity(context: Context): ComponentActivity {
-            var ctx: Context? = context
-            while (ctx is android.content.ContextWrapper) {
-                if (ctx is ComponentActivity) return ctx
-                ctx = ctx.baseContext
-            }
-            error(
-                "Dhruva could not find a ComponentActivity. " +
-                    "Call rememberLocationTracker() inside an Activity context.",
-            )
-        }
-
         // referenced by tests / docs to verify priority mapping is wired up
         internal val DEFAULT_PRIORITY: Int = Priority.PRIORITY_HIGH_ACCURACY
     }
