@@ -7,7 +7,7 @@
 A small **Kotlin Multiplatform** location library for Android and iOS.
 One-shot and continuous tracking, with the right defaults baked in.
 
-[![Maven Central](https://img.shields.io/maven-central/v/xyz.ksharma/dhruva-state?style=flat-square&label=maven%20central)](https://central.sonatype.com/artifact/xyz.ksharma/dhruva-state)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ksharma-xyz/dhruva-state?style=flat-square&label=maven%20central)](https://central.sonatype.com/artifact/io.github.ksharma-xyz/dhruva-state)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3.10-7F52FF.svg?style=flat-square&logo=kotlin)](https://kotlinlang.org)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-lightgrey.svg?style=flat-square)](#)
@@ -88,9 +88,9 @@ LaunchedEffect(Unit) {
 
 | Artifact | Purpose | Required? |
 |---|---|---|
-| `xyz.ksharma:dhruva-state` | `Location`, `LocationConfig`, `LocationPriority`, `LocationError`. | yes |
-| `xyz.ksharma:dhruva-data` | `LocationTracker` interface and Android/iOS implementations. | yes |
-| `xyz.ksharma:dhruva-di-koin` | Optional Koin module factory. | optional |
+| `io.github.ksharma-xyz:dhruva-state` | `Location`, `LocationConfig`, `LocationPriority`, `LocationError`. | yes |
+| `io.github.ksharma-xyz:dhruva-data` | `LocationTracker` interface and Android/iOS implementations. | yes |
+| `io.github.ksharma-xyz:dhruva-di-koin` | Optional Koin module factory. | optional |
 
 ## Supported platforms
 

@@ -7,17 +7,15 @@ End-to-end flow for cutting a release to **Maven Central** via the new
 
 ### 1. Claim your namespace on Central Portal
 
-1. Sign up at <https://central.sonatype.com/>.
-2. Add a namespace. For `xyz.ksharma` you need to verify ownership of the `ksharma.xyz`
-   domain. The standard route is a **DNS TXT record** pointing back to your Central
-   user, which Central Portal validates within a few minutes.
-3. Once the namespace is verified, you can publish any artifact under
-   `xyz.ksharma:*`.
+Dhruva publishes under **`io.github.ksharma-xyz`** — the auto-validated GitHub-style namespace. Central Portal verifies it from your GitHub username, no DNS work needed.
 
-!!! tip "Don't have a domain?"
-    You can use the GitHub-style `io.github.ksharma-xyz` namespace instead, which is
-    auto-validated by Central Portal based on your GitHub username. Cheaper if you
-    don't already own a domain.
+1. Sign in at <https://central.sonatype.com/> (use the same GitHub account as the repo owner).
+2. **Namespaces** → Add `io.github.ksharma-xyz`.
+3. Central detects the matching GitHub account and verifies in seconds.
+4. Once verified, you can publish any artifact under `io.github.ksharma-xyz:*`.
+
+!!! note "Why io.github.* instead of xyz.ksharma?"
+    Both work on Maven Central. We picked `io.github.ksharma-xyz` because it auto-verifies via GitHub and skips the DNS dance. If you ever want to migrate to a domain-based namespace later, you can publish under both — but it's a coordinate change for consumers, so pick early and stick with it.
 
 ### 2. Generate a signing key
 
@@ -108,7 +106,7 @@ Before tagging, confirm everything publishes locally:
 
 ```bash
 ./gradlew publishToMavenLocal --no-configuration-cache
-ls ~/.m2/repository/xyz/ksharma/dhruva-state/0.1.0/
+ls ~/.m2/repository/io/github/ksharma-xyz/dhruva-state/0.1.0/
 ```
 
 You should see `.aar`, `.pom`, `.module`, and `.asc` signature files.

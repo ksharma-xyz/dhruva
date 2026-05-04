@@ -2,20 +2,11 @@
 
 This is your checklist for taking Dhruva from "private repo on disk" to "available on Maven Central". Do these in order. Each is independent so you can pause between them.
 
-## 1. Verify the namespace on Central Portal
+## 1. Namespace on Central Portal — DONE
 
-You have DNS access for `ksharma.xyz`, so this is the canonical (branded) route.
+You're publishing under `io.github.ksharma-xyz`, auto-verified by Central Portal via your GitHub account. No DNS work needed. Already verified, nothing to do here.
 
-- [ ] Sign in at <https://central.sonatype.com/>
-- [ ] **Namespaces** → Add `xyz.ksharma`
-- [ ] Copy the verification string Central gives you (looks like `_central=abc123xyz...`)
-- [ ] Add a TXT record at the root of `ksharma.xyz`:
-  - **Name**: `_central`
-  - **Type**: `TXT`
-  - **Value**: the verification string
-- [ ] Wait ~5 minutes for DNS propagation
-- [ ] Back on Central Portal: **Verify**
-- [ ] Once verified, you own `xyz.ksharma:*` for everything you publish
+- [x] Namespace `io.github.ksharma-xyz` verified on Central Portal
 
 ## 2. Generate a PGP signing key
 
