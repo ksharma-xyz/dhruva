@@ -1,0 +1,13 @@
+// Sample app configuration. Bundle ID is namespaced under xyz.ksharma.dhruva
+// to avoid clashing with any real Dhruva consumer's bundle ID. Adjust TEAM_ID
+// to your Apple Developer team if you want to run on a physical device.
+
+TEAM_ID=
+
+PRODUCT_NAME=Dhruva Sample
+PRODUCT_BUNDLE_IDENTIFIER=xyz.ksharma.dhruva.sample$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=0.1.0
+
+IPHONEOS_DEPLOYMENT_TARGET=15.3
