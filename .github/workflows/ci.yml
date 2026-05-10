@@ -12,8 +12,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    name: Build, test, sample APK
+  build-android:
+    name: Build Android (sample APK, JVM + Android tests, detekt)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle (with cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Write local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Unit tests (JVM common code)
+        run: ./gradlew jvmTest --stacktrace
+
+      - name: Unit tests (Android)
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Build sample APK (debug)
+        run: ./gradlew :sample-android:assembleDebug --stacktrace
+
+      - name: Detekt
+        run: ./gradlew detekt --stacktrace
+        continue-on-error: true
+
+      - name: Upload sample APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-android-debug-apk
+          path: sample-android/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports-android
+          path: |
+            **/build/reports/
+            **/build/test-results/
+          retention-days: 7
+
+  build-ios:
+    name: Build iOS (Kotlin tests, sample app, publish dry-run)
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
@@ -38,20 +88,8 @@ jobs:
       - name: Write local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      - name: Compile every target
-        run: ./gradlew assemble --stacktrace
-
-      - name: Unit tests (JVM common code)
-        run: ./gradlew jvmTest --stacktrace
-
-      - name: Unit tests (Android)
-        run: ./gradlew testDebugUnitTest --stacktrace
-
       - name: Unit tests (iOS Simulator arm64)
         run: ./gradlew iosSimulatorArm64Test --stacktrace
-
-      - name: Build sample APK (debug)
-        run: ./gradlew :sample-android:assembleDebug --stacktrace
 
       - name: Build sample iOS app (Simulator)
         # Compiles the SwiftUI host AND embeds the Compose framework via the
@@ -70,21 +108,11 @@ jobs:
             build
 
       - name: Verify Maven publication (dry run, local repo only)
+        # Requires macOS so all KMP targets (Android + iOS) compile in one place
+        # before the artifacts are assembled into a publication.
         run: ./gradlew publishToMavenLocal --no-configuration-cache --stacktrace
         env:
           ORG_GRADLE_PROJECT_RELEASE_SIGNING_ENABLED: "false"
-
-      - name: Detekt
-        run: ./gradlew detekt --stacktrace
-        continue-on-error: true
-
-      - name: Upload sample APK
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: sample-android-debug-apk
-          path: sample-android/build/outputs/apk/debug/*.apk
-          retention-days: 14
 
       - name: Upload sample iOS .app
         if: success()
@@ -98,7 +126,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-reports
+          name: build-reports-ios
           path: |
             **/build/reports/
             **/build/test-results/
