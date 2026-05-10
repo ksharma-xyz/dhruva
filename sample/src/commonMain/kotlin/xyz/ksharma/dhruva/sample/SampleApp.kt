@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -115,6 +117,7 @@ fun SampleApp(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
                 .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
@@ -123,8 +126,6 @@ fun SampleApp(modifier: Modifier = Modifier) {
             FixDetails(current = current)
             ErrorBanner(error = error)
             TrailPanel(trail = trail, current = current)
-
-            Spacer(Modifier.weight(1f))
 
             ActionButton(
                 streaming = streaming,
@@ -380,24 +381,49 @@ private fun ErrorBanner(error: LocationError?) {
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
+        val openSettings = rememberSettingsOpener()
         val message = when (error) {
-            is LocationError.PermissionDenied -> "Location permission denied. Pair Dhruva with Aagya, or grant manually in Settings."
-            is LocationError.LocationDisabled -> "Device location services are off. Enable them in system settings."
-            is LocationError.Timeout -> "No fix in time. Move toward a window or try a lower priority."
+            is LocationError.PermissionDenied -> "Location permission denied. Open Settings to grant manually."
+            is LocationError.LocationDisabled -> "Device location services are off. Open Settings to enable them."
+            is LocationError.Timeout -> "No fix in time. Move toward a window, or try a lower priority."
             is LocationError.Unknown -> "Platform error: ${error.cause?.message ?: "unknown"}."
             null -> ""
         }
+        val showSettingsButton = error is LocationError.PermissionDenied ||
+            error is LocationError.LocationDisabled
         Surface(
             color = Color(0xFF3A1410),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFFFB4A6),
+            Column(
                 modifier = Modifier.padding(16.dp),
-            )
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFFFFB4A6),
+                )
+                if (showSettingsButton) {
+                    Button(
+                        onClick = openSettings,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE25C29),
+                            contentColor = Color.White,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                    ) {
+                        Text(
+                            text = "Open Settings",
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        )
+                    }
+                }
+            }
         }
     }
 }
