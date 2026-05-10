@@ -53,6 +53,22 @@ jobs:
       - name: Build sample APK (debug)
         run: ./gradlew :sample-android:assembleDebug --stacktrace
 
+      - name: Build sample iOS app (Simulator)
+        # Compiles the SwiftUI host AND embeds the Compose framework via the
+        # gradle build phase. Catches mistakes that linkDebugFrameworkIosSimulatorArm64
+        # would miss: pbxproj errors, missing Info.plist keys (e.g.
+        # CADisableMinimumFrameDurationOnPhone), Swift name mismatches against
+        # the generated framework header, etc.
+        run: |
+          xcodebuild \
+            -project sample-ios/iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath /tmp/dhruva-sample-derived \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" \
+            build
+
       - name: Verify Maven publication (dry run, local repo only)
         run: ./gradlew publishToMavenLocal --no-configuration-cache --stacktrace
         env:
@@ -68,6 +84,14 @@ jobs:
         with:
           name: sample-android-debug-apk
           path: sample-android/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Upload sample iOS .app
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-ios-debug-app
+          path: /tmp/dhruva-sample-derived/Build/Products/Debug-iphonesimulator/*.app
           retention-days: 14
 
       - name: Upload reports on failure
