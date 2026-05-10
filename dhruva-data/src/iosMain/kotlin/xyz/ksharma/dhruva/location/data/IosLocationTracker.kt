@@ -7,14 +7,19 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.kCLAuthorizationStatusAuthorizedAlways
 import platform.CoreLocation.kCLAuthorizationStatusAuthorizedWhenInUse
+import platform.CoreLocation.kCLAuthorizationStatusDenied
+import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
+import platform.CoreLocation.kCLAuthorizationStatusRestricted
 import xyz.ksharma.dhruva.location.Location
 import xyz.ksharma.dhruva.location.LocationConfig
 import xyz.ksharma.dhruva.location.LocationError
 import xyz.ksharma.dhruva.location.Logger
+import kotlin.coroutines.resume
 
 /**
  * iOS implementation of [LocationTracker], backed by `CLLocationManager`.
@@ -26,6 +31,11 @@ import xyz.ksharma.dhruva.location.Logger
  *     then falls back to `requestLocation()` and waits on the delegate.
  *   - `startTracking`: seeds with the cached location for instant UI, then continues
  *     via `startUpdatingLocation()`.
+ *   - When authorization is `notDetermined`, the tracker calls
+ *     `requestWhenInUseAuthorization()` and suspends until the user responds.
+ *     Without this call iOS would never register the app in the system
+ *     Settings (Privacy & Security, then Location Services), leaving users
+ *     with no way to grant access manually after a denial.
  */
 internal class IosLocationTracker(
     private val manager: CLLocationManager,
@@ -94,10 +104,42 @@ internal class IosLocationTracker(
 
     override suspend fun isLocationEnabled(): Boolean = CLLocationManager.locationServicesEnabled()
 
-    private fun ensurePermission() {
-        val status = manager.authorizationStatus
-        val granted = status == kCLAuthorizationStatusAuthorizedWhenInUse ||
-            status == kCLAuthorizationStatusAuthorizedAlways
-        if (!granted) throw LocationError.PermissionDenied()
+    private suspend fun ensurePermission() {
+        when (manager.authorizationStatus) {
+            kCLAuthorizationStatusAuthorizedWhenInUse,
+            kCLAuthorizationStatusAuthorizedAlways -> return
+
+            kCLAuthorizationStatusDenied,
+            kCLAuthorizationStatusRestricted -> throw LocationError.PermissionDenied()
+
+            kCLAuthorizationStatusNotDetermined -> {
+                logger.debug("ensurePermission: requesting WhenInUse authorization")
+                requestWhenInUseAuthorizationAndWait()
+                val status = manager.authorizationStatus
+                val granted = status == kCLAuthorizationStatusAuthorizedWhenInUse ||
+                    status == kCLAuthorizationStatusAuthorizedAlways
+                if (!granted) throw LocationError.PermissionDenied()
+            }
+
+            else -> throw LocationError.PermissionDenied()
+        }
+    }
+
+    private suspend fun requestWhenInUseAuthorizationAndWait() {
+        suspendCancellableCoroutine<Unit> { cont ->
+            delegate.onAuthorizationChange = { mgr ->
+                // Skip the synthetic callback iOS fires with the still-undetermined
+                // status when the prompt first appears; only resume once the user
+                // has actually responded.
+                if (mgr.authorizationStatus != kCLAuthorizationStatusNotDetermined) {
+                    delegate.onAuthorizationChange = {}
+                    if (cont.isActive) cont.resume(Unit)
+                }
+            }
+            cont.invokeOnCancellation {
+                delegate.onAuthorizationChange = {}
+            }
+            manager.requestWhenInUseAuthorization()
+        }
     }
 }

@@ -7,7 +7,7 @@ import platform.Foundation.NSError
 import platform.darwin.NSObject
 
 /**
- * Bridges `CLLocationManager` callbacks to a pair of Kotlin callbacks.
+ * Bridges `CLLocationManager` callbacks to a small set of Kotlin callbacks.
  *
  * One delegate may be reused for both single-shot and continuous tracking; the
  * controller swaps in the relevant callback before starting updates.
@@ -15,6 +15,7 @@ import platform.darwin.NSObject
 internal class IosLocationDelegate(
     var onLocations: (List<CLLocation>) -> Unit = {},
     var onError: (NSError) -> Unit = {},
+    var onAuthorizationChange: (CLLocationManager) -> Unit = {},
 ) : NSObject(), CLLocationManagerDelegateProtocol {
 
     override fun locationManager(
@@ -31,5 +32,9 @@ internal class IosLocationDelegate(
         didFailWithError: NSError,
     ) {
         onError(didFailWithError)
+    }
+
+    override fun locationManagerDidChangeAuthorization(manager: CLLocationManager) {
+        onAuthorizationChange(manager)
     }
 }
