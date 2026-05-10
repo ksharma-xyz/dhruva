@@ -26,4 +26,5 @@ dependencyResolutionManagement {
 include(":dhruva-state")
 include(":dhruva-data")
 include(":dhruva-di-koin")
+include(":sample")
 include(":sample-android")

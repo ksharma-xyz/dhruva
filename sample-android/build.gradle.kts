@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "xyz.ksharma.dhruva.sample"
+    namespace = "xyz.ksharma.dhruva.sample.android"
     compileSdk = libs.versions.android.compile.sdk.get().toInt()
 
     defaultConfig {
@@ -37,12 +37,10 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.dhruvaData)
+    // Thin launcher that hosts the shared CMP sample.
+    implementation(projects.sample)
     implementation(libs.compose.runtime)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui)
-    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.compose)
 }
