@@ -1,18 +1,18 @@
-import SwiftUI
 import UIKit
+import SwiftUI
 import DhruvaSample
 
-struct ContentView: View {
-    var body: some View {
-        ComposeView()
-            .ignoresSafeArea(.keyboard)
-    }
-}
-
-private struct ComposeView: UIViewControllerRepresentable {
+struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         IosEntryKt.SampleViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct ContentView: View {
+    var body: some View {
+        ComposeView()
+            .ignoresSafeArea()
+    }
 }
