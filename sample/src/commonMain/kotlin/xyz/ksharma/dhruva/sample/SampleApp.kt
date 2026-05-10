@@ -79,9 +79,11 @@ import kotlin.math.sin
  *   - Mode toggle: One-shot vs Streaming. Tap a single button; state animates.
  *   - Error states surface as a banner card explaining the LocationError type.
  *
- * The user is expected to grant location permission via the system before tapping.
- * The sample doesn't include a permission flow because Dhruva intentionally
- * doesn't ship one; pair with Aagya for that. The error banner mentions this.
+ * Permissions: on iOS, Dhruva triggers the system prompt itself the first time
+ * the user taps the action button (CLLocationManager owns the authorization
+ * flow on Apple platforms, so wrapping it is unavoidable). On Android, runtime
+ * permissions are out of scope for this library; the sample's error banner
+ * surfaces a deep link to system Settings so the user can grant access manually.
  */
 @Composable
 fun SampleApp(modifier: Modifier = Modifier) {
