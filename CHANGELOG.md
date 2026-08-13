@@ -6,6 +6,24 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed - BREAKING
+- **Group ID is now `xyz.ksharma`**, was `io.github.ksharma-xyz`. It now matches
+  the `xyz.ksharma.*` package names the library has always shipped. Maven Central
+  coordinates cannot be moved, so 0.1.0 and 0.1.1 remain published under the old
+  group and 0.2.0 onward is under the new one. Update the group when you upgrade;
+  artifact names and the API are unchanged.
+
+  ```diff
+  - implementation("io.github.ksharma-xyz:dhruva-data:0.1.1")
+  + implementation("xyz.ksharma:dhruva-data:0.2.0")
+  ```
+
+### Added
+- Snapshot builds of `main` are now published to the Central Portal snapshot
+  repository, so downstream apps can consume unreleased changes without waiting
+  for a tagged release. See `docs/publishing.md` for the repository URL and the
+  caching caveat.
+
 ## [0.1.1] - 2026-05-05
 
 ### Fixed

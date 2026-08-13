@@ -11,7 +11,7 @@ ten minutes.
     kotlin {
         sourceSets {
             commonMain.dependencies {
-                implementation("io.github.ksharma-xyz:dhruva-data:0.1.0")
+                implementation("io.github.ksharma-xyz:dhruva-data:0.1.1")
             }
         }
     }
@@ -21,7 +21,7 @@ ten minutes.
 
     ```kotlin title="app/build.gradle.kts"
     dependencies {
-        implementation("io.github.ksharma-xyz:dhruva-data:0.1.0")
+        implementation("io.github.ksharma-xyz:dhruva-data:0.1.1")
     }
     ```
 
