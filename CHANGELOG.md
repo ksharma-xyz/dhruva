@@ -6,6 +6,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-14
+
 ### Changed - BREAKING
 - **Group ID is now `xyz.ksharma`**, was `io.github.ksharma-xyz`. It now matches
   the `xyz.ksharma.*` package names the library has always shipped. Maven Central

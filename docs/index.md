@@ -36,7 +36,7 @@ Dhruva is a small KMP library that gives you a uniform location API across Andro
 ## Quickstart
 
 ```kotlin
-implementation("io.github.ksharma-xyz:dhruva-data:0.1.1")
+implementation("xyz.ksharma:dhruva-data:0.2.0")
 ```
 
 ```kotlin

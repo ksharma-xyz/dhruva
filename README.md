@@ -7,7 +7,7 @@
 A small **Kotlin Multiplatform** location library for Android and iOS.
 One-shot and continuous tracking, with the right defaults baked in.
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.ksharma-xyz/dhruva-state?style=flat-square&label=maven%20central)](https://central.sonatype.com/artifact/io.github.ksharma-xyz/dhruva-state)
+[![Maven Central](https://img.shields.io/maven-central/v/xyz.ksharma/dhruva-state?style=flat-square&label=maven%20central)](https://central.sonatype.com/artifact/xyz.ksharma/dhruva-state)
 [![CI](https://img.shields.io/github/actions/workflow/status/ksharma-xyz/dhruva/ci.yml?style=flat-square&label=CI)](https://github.com/ksharma-xyz/dhruva/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/github/actions/workflow/status/ksharma-xyz/dhruva/docs.yml?style=flat-square&label=docs)](https://ksharma-xyz.github.io/dhruva/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
@@ -90,16 +90,15 @@ LaunchedEffect(Unit) {
 
 | Artifact | Purpose | Required? |
 |---|---|---|
-| `io.github.ksharma-xyz:dhruva-state` | `Location`, `LocationConfig`, `LocationPriority`, `LocationError`. | yes |
-| `io.github.ksharma-xyz:dhruva-data` | `LocationTracker` interface and Android/iOS implementations. | yes |
-| `io.github.ksharma-xyz:dhruva-di-koin` | Optional Koin module factory. | optional |
+| `xyz.ksharma:dhruva-state` | `Location`, `LocationConfig`, `LocationPriority`, `LocationError`. | yes |
+| `xyz.ksharma:dhruva-data` | `LocationTracker` interface and Android/iOS implementations. | yes |
+| `xyz.ksharma:dhruva-di-koin` | Optional Koin module factory. | optional |
 
-> **Heads up — the group ID changes in 0.2.0.** Dhruva is moving from
+> **Upgrading from 0.1.1 or earlier?** The group ID changed in 0.2.0, from
 > `io.github.ksharma-xyz` to `xyz.ksharma`, matching the `xyz.ksharma.*` package
-> names it has always shipped. Maven Central coordinates cannot be moved, so
-> 0.1.1 and earlier stay where they are and 0.2.0 onward publishes under
-> `xyz.ksharma:dhruva-*`. Update the group when you upgrade; artifact names and
-> the API are unchanged.
+> names the library has always shipped. Maven Central coordinates cannot be
+> moved, so 0.1.1 and earlier remain under the old group. Change the group when
+> you upgrade; artifact names and the API are unchanged.
 
 ## Supported platforms
 
