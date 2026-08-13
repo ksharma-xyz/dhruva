@@ -97,17 +97,91 @@ git commit -am "Bump to 0.2.0-SNAPSHOT"
 git push origin main
 ```
 
-## Snapshots and Central Portal
+!!! warning "Step 3 is not optional"
+    Leaving `main` on a release version means the next push to `main` is a
+    non-SNAPSHOT commit, and `publish-snapshot.yml` will skip it rather than
+    publish anything. Downstream apps then silently stop receiving new
+    snapshots until someone notices. Bump back in the same session as the
+    release.
 
-Sonatype Central Portal does **not** accept SNAPSHOT versions, only releases.
-Dhruva's `publish-snapshot.yml` workflow detects any `-SNAPSHOT` suffix in
-`gradle.properties` and skips the publish step with a clean notice. So during
-normal `0.X.Y-SNAPSHOT` development, pushes to `main` no-op cleanly on the
-publish side; CI still runs.
+## Pre-release channels
 
-The intended flow is: tag `v0.X.Y`, the `publish-release.yml` workflow pushes
-the release through Central Portal. Use snapshots locally via
-`./gradlew publishToMavenLocal` for testing only.
+Two channels exist for getting unreleased changes into a consuming app. They
+answer different questions.
+
+### Snapshots — "is my fix on main yet?"
+
+`main` stays on `x.y.z-SNAPSHOT` between releases, and every push republishes
+that coordinate to the Central Portal snapshot repository. No tag, no
+ceremony, nothing permanent.
+
+!!! danger "Two prerequisites, or the publish fails"
+    1. **The namespace must have snapshots enabled.** On
+       <https://central.sonatype.com/publishing/namespaces>, click the three
+       dots next to `io.github.ksharma-xyz` and select **Enable SNAPSHOTs**.
+       This is a one-time manual step and cannot be automated. The namespace
+       is shared with Aagya, so enabling it once covers both libraries.
+    2. **`vanniktech-publish` must be 0.31.0 or newer.** Central Portal
+       snapshot support landed in 0.31.0. On 0.30.0 the publish fails at
+       execution time with `Snapshots are not supported when publishing
+       through the central portal`, regardless of the namespace setting.
+
+Consuming apps opt in with an extra repository:
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://central.sonatype.com/repository/maven-snapshots/")
+}
+
+dependencies {
+    implementation("io.github.ksharma-xyz:dhruva-data:0.2.0-SNAPSHOT")
+}
+```
+
+A snapshot coordinate is **mutable** — `0.2.0-SNAPSHOT` today is not the same
+build as `0.2.0-SNAPSHOT` tomorrow. Gradle caches changing modules for 24 hours
+by default, so an app can quietly test stale bits and you will chase a bug that
+was already fixed. Disable that caching wherever you consume snapshots:
+
+```kotlin
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+```
+
+### Release candidates — "are we shipping this?"
+
+An RC is a real, immutable Maven Central release with a pre-release suffix. Cut
+one when a version is feature-complete and you want a build that internal apps
+can pin and reproduce.
+
+```bash
+# in gradle.properties: VERSION_NAME=0.2.0-rc.1
+git commit -am "0.2.0-rc.1"
+git tag v0.2.0-rc.1
+git push origin main --tags
+```
+
+`publish-release.yml` handles it exactly like a release — the tag filter is
+`v*` — with two differences: the GitHub Release is marked as a pre-release, so
+it never displaces the current release on the repo front page, and Gradle's
+version ordering already knows `0.2.0-rc.1` sorts below `0.2.0`.
+
+Every RC is permanent and public, the same as any release. Cut them for
+candidates you intend to promote, not per commit — that is what snapshots are
+for. After tagging an RC, bump `main` back to `0.2.0-SNAPSHOT` so snapshot
+publishing resumes.
+
+### Which one
+
+| | Snapshot | RC |
+|---|---|---|
+| Triggered by | every push to `main` | a tag |
+| Mutable | yes | no |
+| Permanent | no | yes, forever |
+| Reproducible build | no | yes |
+| Use for | continuous dogfooding | sign-off before a release |
 
 ## Local dry run
 

@@ -36,7 +36,7 @@ turbine = "1.2.1"
 robolectric = "4.16.1"
 
 # Publishing & Tooling
-vanniktech-publish = "0.30.0"
+vanniktech-publish = "0.37.0"
 dokka = "2.0.0"
 detekt = "1.23.8"
 android-min-sdk = "28"
