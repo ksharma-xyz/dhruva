@@ -94,6 +94,13 @@ LaunchedEffect(Unit) {
 | `io.github.ksharma-xyz:dhruva-data` | `LocationTracker` interface and Android/iOS implementations. | yes |
 | `io.github.ksharma-xyz:dhruva-di-koin` | Optional Koin module factory. | optional |
 
+> **Heads up — the group ID changes in 0.2.0.** Dhruva is moving from
+> `io.github.ksharma-xyz` to `xyz.ksharma`, matching the `xyz.ksharma.*` package
+> names it has always shipped. Maven Central coordinates cannot be moved, so
+> 0.1.1 and earlier stay where they are and 0.2.0 onward publishes under
+> `xyz.ksharma:dhruva-*`. Update the group when you upgrade; artifact names and
+> the API are unchanged.
+
 ## Supported platforms
 
 - **Android** API 28+ (Android 7.0). Android target uses `FusedLocationProviderClient`,
