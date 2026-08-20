@@ -10,7 +10,7 @@
         android:theme="@style/Theme.Dhruva">
 
         <activity
-            android:name=".SampleActivity"
+            android:name="xyz.ksharma.dhruva.sample.SampleActivity"
             android:exported="true"
             android:theme="@style/Theme.Dhruva">
             <intent-filter>
