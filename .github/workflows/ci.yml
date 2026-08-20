@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build-android:
-    name: Build Android (sample APK, JVM + Android tests, detekt)
+    name: Build Android (gradlew build - assemble, tests, lint, detekt)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -31,18 +31,47 @@ jobs:
       - name: Write local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      - name: Unit tests (JVM common code)
-        run: ./gradlew jvmTest --stacktrace
+      # One `build` rather than a hand-maintained list of tasks. `build` is what a
+      # contributor runs locally, so CI and local agree by construction instead of
+      # by remembering to keep two lists in sync. That drift is not hypothetical:
+      # lint was missing here, which let a manifest error ship a valid APK that
+      # crashed on launch, twice, in the sibling aagya repo (ksharma-xyz/aagya#6).
+      #
+      # This covers assemble (both sample APK variants), lint, detekt, and the JVM
+      # and Android unit tests. Gradle names the failing task on failure, and the
+      # reports artifact below carries the detail.
+      - name: Build, test, lint, detekt
+        id: build
+        run: ./gradlew build --stacktrace
 
-      - name: Unit tests (Android)
-        run: ./gradlew testDebugUnitTest --stacktrace
+      # Kover's report task depends on the same test tasks `build` just ran, so those are
+      # UP-TO-DATE here and this only does the merge - coverage costs a report, not a second
+      # test run. Only reached when the build passed: partial coverage from a broken run is
+      # worse than none.
+      - name: Generate coverage report
+        id: coverage
+        run: ./gradlew koverXmlReport koverHtmlReport --stacktrace
 
-      - name: Build sample APK (debug)
-        run: ./gradlew :sample-android:assembleDebug --stacktrace
+      - name: Upload coverage report (HTML)
+        if: always() && steps.coverage.conclusion == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.run_id }}
+          path: build/reports/kover/html/**
+          if-no-files-found: warn
+          retention-days: 7
 
-      - name: Detekt
-        run: ./gradlew detekt --stacktrace
-        continue-on-error: true
+      # Best-effort: a missing token or a Codecov outage must not fail a PR. The `host-tests`
+      # flag records what this number actually measures - Kover is JVM-only, so the iOS
+      # actuals are absent from it by construction, not by omission.
+      - name: Upload coverage to Codecov
+        if: always() && steps.coverage.conclusion == 'success'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/reports/kover/report.xml
+          flags: host-tests
+          fail_ci_if_error: false
 
       - name: Upload sample APK
         if: success()

@@ -39,6 +39,7 @@ robolectric = "4.16.1"
 vanniktech-publish = "0.37.0"
 dokka = "2.0.0"
 detekt = "1.23.8"
+kover = "0.9.9"
 android-min-sdk = "28"
 android-target-sdk = "36"
 android-compile-sdk = "36"
@@ -86,3 +87,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
