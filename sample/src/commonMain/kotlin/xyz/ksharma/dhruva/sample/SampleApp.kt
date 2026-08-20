@@ -127,7 +127,7 @@ fun SampleApp(modifier: Modifier = Modifier) {
             CenterPiece(current = current, pulseTick = pulseTick, streaming = streaming)
             FixDetails(current = current)
             ErrorBanner(error = error)
-            TrailPanel(trail = trail, current = current)
+            TrailPanel(trail = trail)
 
             ActionButton(
                 streaming = streaming,
@@ -431,7 +431,7 @@ private fun ErrorBanner(error: LocationError?) {
 }
 
 @Composable
-private fun TrailPanel(trail: List<Location>, current: Location?) {
+private fun TrailPanel(trail: List<Location>) {
     val hasTrail = trail.size >= 2
     AnimatedVisibility(visible = hasTrail) {
         Surface(
