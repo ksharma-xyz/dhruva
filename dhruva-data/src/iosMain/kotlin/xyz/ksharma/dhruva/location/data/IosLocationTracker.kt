@@ -105,24 +105,18 @@ internal class IosLocationTracker(
     override suspend fun isLocationEnabled(): Boolean = CLLocationManager.locationServicesEnabled()
 
     private suspend fun ensurePermission() {
-        when (manager.authorizationStatus) {
-            kCLAuthorizationStatusAuthorizedWhenInUse,
-            kCLAuthorizationStatusAuthorizedAlways -> return
-
-            kCLAuthorizationStatusDenied,
-            kCLAuthorizationStatusRestricted -> throw LocationError.PermissionDenied()
-
-            kCLAuthorizationStatusNotDetermined -> {
-                logger.debug("ensurePermission: requesting WhenInUse authorization")
-                requestWhenInUseAuthorizationAndWait()
-                val status = manager.authorizationStatus
-                val granted = status == kCLAuthorizationStatusAuthorizedWhenInUse ||
-                    status == kCLAuthorizationStatusAuthorizedAlways
-                if (!granted) throw LocationError.PermissionDenied()
-            }
-
-            else -> throw LocationError.PermissionDenied()
+        // NotDetermined is the only status worth acting on: prompt, then fall through and
+        // re-read. Every other status is already final, and Denied, Restricted and any
+        // future unknown value all mean the same thing here, so they share one exit.
+        if (manager.authorizationStatus == kCLAuthorizationStatusNotDetermined) {
+            logger.debug("ensurePermission: requesting WhenInUse authorization")
+            requestWhenInUseAuthorizationAndWait()
         }
+
+        val status = manager.authorizationStatus
+        val granted = status == kCLAuthorizationStatusAuthorizedWhenInUse ||
+            status == kCLAuthorizationStatusAuthorizedAlways
+        if (!granted) throw LocationError.PermissionDenied()
     }
 
     private suspend fun requestWhenInUseAuthorizationAndWait() {

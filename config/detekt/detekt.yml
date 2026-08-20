@@ -1,0 +1,52 @@
+# Detekt configuration for Dhruva.
+#
+# buildUponDefaultConfig = true in build.gradle.kts, so this file only records
+# deliberate deviations from detekt's defaults. Anything not mentioned here keeps
+# the default behaviour.
+
+build:
+  # Fail the build on any finding. The point of wiring detekt up is that its
+  # output is acted on; a non-zero threshold would recreate the situation where
+  # findings are reported and ignored.
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    # Compose screen composables are declarative trees, not imperative logic, and
+    # they legitimately run past 60 lines. Splitting one purely to satisfy a
+    # threshold produces indirection rather than clarity. The rule stays active
+    # for the library modules, which is where it earns its keep.
+    excludes:
+      - '**/sample/**'
+  LongParameterList:
+    # Location APIs take a handful of configuration parameters by
+    # nature, and splitting them into holder objects would be worse to call.
+    functionThreshold: 8
+    constructorThreshold: 8
+  TooManyFunctions:
+    # Sample UI files legitimately hold several small composables.
+    excludes:
+      - '**/sample/**'
+
+style:
+  MagicNumber:
+    # Sample code and tests use literal values as fixtures; that is the clearest
+    # form there.
+    excludes:
+      - '**/sample/**'
+      - '**/*Test.kt'
+  MaxLineLength:
+    maxLineLength: 120
+  ReturnCount:
+    # Location permission and availability flows read as a sequence of early returns,
+    # which is clearer than nesting them.
+    max: 6
+
+naming:
+  FunctionNaming:
+    # Composables are PascalCase by convention, and kotlin-test names are
+    # backticked sentences.
+    ignoreAnnotated:
+      - 'Composable'
+    excludes:
+      - '**/*Test.kt'
